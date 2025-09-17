@@ -53,3 +53,21 @@ Let me know if you want:
 
 I can generate a matching codebase scaffold too if needed.
 ```
+
+
+## Logging with Winston and Morgan
+
+This project implements robust logging functionality using **Winston** and **Morgan** libraries in a Node.js application. Winston handles application-level logs, while Morgan manages HTTP request logging.
+
+---
+
+### 📦 Dependencies
+
+- [winston](https://www.npmjs.com/package/winston)
+- [morgan](https://www.npmjs.com/package/morgan)
+
+Install them using:
+
+```bash
+npm install winston morgan
+```

@@ -1,5 +1,8 @@
 import express from "express";
 import 'dotenv/config'
+// for logging libraries
+import logger from "./logger.js";
+import morgan from "morgan";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,6 +21,26 @@ app.get("/twitter", (req, res) => {
 });
 */
 
+const morganFormat = ":method :url :status :response-time ms";
+
+// app.use should be after "const app = express();"
+app.use(
+  morgan(morganFormat, {
+    stream: {
+      write: (message) => {
+        const logObject = {
+          method: message.split(" ")[0],
+          url: message.split(" ")[1],
+          status: message.split(" ")[2],
+          responseTime: message.split(" ")[3],
+        };
+        logger.info(JSON.stringify(logObject));
+      },
+    },
+  })
+);
+
+
 // CRUD Operations
 app.use(express.json());
 
@@ -26,6 +49,7 @@ let nextId = 1;
 
 // add a new brew
 app.post("/brews", (req, res) => {
+  logger.info("A post request is made to add a new Brew")
   const { name, price } = req.body;
   const newbrew = {
     id: nextId++,
@@ -53,6 +77,7 @@ app.get("/brews/:id", (req, res) => {
 
 // update brew
 app.put("/brews/:id", (req, res) => {
+  logger.warn("A Brew is updated to brewData DB")
   const brew = brewData.find((brew) => brew.id === parseInt(req.params.id));
   if (!brew) {
     return res.status(404).send("brew not found");
@@ -67,6 +92,7 @@ app.put("/brews/:id", (req, res) => {
 
 // delete brew
 app.delete("/brews/:id", (req, res) => {
+  logger.warn("A Brew is deleted from brewData DB")
   const index = brewData.findIndex((brew) => brew.id === parseInt(req.params.id));
   if (index === -1) {
     return res.status(404).send("brew not found");
